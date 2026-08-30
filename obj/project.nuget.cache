@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "dgSpecHash": "iOPmNd7NN/8=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\grandy\\projects\\migration-test-deprecated\\migration-test-deprecated.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\grandy\\.nuget\\packages\\microsoft.netcore.app.ref\\8.0.11\\microsoft.netcore.app.ref.8.0.11.nupkg.sha512",
+    "C:\\Users\\grandy\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\8.0.11\\microsoft.windowsdesktop.app.ref.8.0.11.nupkg.sha512",
+    "C:\\Users\\grandy\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\8.0.11\\microsoft.aspnetcore.app.ref.8.0.11.nupkg.sha512",
+    "C:\\Users\\grandy\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\8.0.11\\microsoft.netcore.app.host.win-x64.8.0.11.nupkg.sha512"
+  ],
+  "logs": []
+}
