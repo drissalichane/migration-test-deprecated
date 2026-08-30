@@ -1,31 +1,44 @@
-using System;
-using System.Net;
-using System.Security.Cryptography;
+var builder = WebApplication.CreateBuilder(args);
 
-namespace MigrationTestDeprecated
+// Add services to the container.
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
 {
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("Fetching data using deprecated WebClient...");
-            using (var client = new WebClient())
-            {
-                // WebClient is deprecated in modern .NET (HttpClient is preferred)
-                try {
-                    string data = client.DownloadString("https://api.github.com");
-                    Console.WriteLine("Data downloaded.");
-                } catch { }
-            }
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
-            Console.WriteLine("Generating random bytes using deprecated RNGCryptoServiceProvider...");
-            // RNGCryptoServiceProvider is deprecated (RandomNumberGenerator.Create() is preferred)
-            using (var rng = new RNGCryptoServiceProvider())
-            {
-                byte[] bytes = new byte[16];
-                rng.GetBytes(bytes);
-                Console.WriteLine(Convert.ToBase64String(bytes));
-            }
-        }
-    }
+app.UseHttpsRedirection();
+
+var summaries = new[]
+{
+    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+};
+
+app.MapGet("/weatherforecast", () =>
+{
+    var forecast =  Enumerable.Range(1, 5).Select(index =>
+        new WeatherForecast
+        (
+            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
+            Random.Shared.Next(-20, 55),
+            summaries[Random.Shared.Next(summaries.Length)]
+        ))
+        .ToArray();
+    return forecast;
+})
+.WithName("GetWeatherForecast")
+.WithOpenApi();
+
+app.Run();
+
+record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
+{
+    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }

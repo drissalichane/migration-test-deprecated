@@ -1,0 +1,6 @@
+@migration_test_deprecated_HostAddress = http://localhost:5023
+
+GET {{migration_test_deprecated_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
