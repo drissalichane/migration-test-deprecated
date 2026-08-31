@@ -10,13 +10,13 @@ namespace migration_test_deprecated.Controllers;
 public class DeprecatedController : ControllerBase
 {
     [HttpGet("fetch")]
-    public IActionResult FetchData()
+    public async Task<IActionResult> FetchData()
     {
         // WebClient is deprecated
-        using (var client = new WebClient())
+        using (var client = new HttpClient())
         {
             try {
-                string data = client.DownloadString("https://api.github.com");
+                string data = await client.GetStringAsync("https://api.github.com");
                 return Ok(data);
             } catch {
                 return StatusCode(500, "Failed to download");
@@ -28,7 +28,7 @@ public class DeprecatedController : ControllerBase
     public IActionResult GetRandomBytes()
     {
         // RNGCryptoServiceProvider is deprecated
-        using (var rng = new RNGCryptoServiceProvider())
+        using (var rng = RandomNumberGenerator.Create())
         {
             byte[] bytes = new byte[16];
             rng.GetBytes(bytes);
