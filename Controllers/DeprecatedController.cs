@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Security.Cryptography;
 using System.Security.Permissions;
+using System.Threading.Tasks;
 
 namespace migration_test_deprecated.Controllers;
 
@@ -10,17 +11,15 @@ namespace migration_test_deprecated.Controllers;
 public class DeprecatedController : ControllerBase
 {
     [HttpGet("fetch")]
-    public IActionResult FetchData()
+    public async Task<IActionResult> FetchData()
     {
-        // WebClient is deprecated
-        using (var client = new WebClient())
-        {
-            try {
-                string data = client.DownloadString("https://api.github.com");
-                return Ok(data);
-            } catch {
-                return StatusCode(500, "Failed to download");
-            }
+        // HttpClient is not deprecated
+        using var client = new HttpClient();
+        try {
+            string data = await client.GetStringAsync("https://api.github.com");
+            return Ok(data);
+        } catch {
+            return StatusCode(500, "Failed to download");
         }
     }
 
@@ -28,11 +27,9 @@ public class DeprecatedController : ControllerBase
     public IActionResult GetRandomBytes()
     {
         // RNGCryptoServiceProvider is deprecated
-        using (var rng = new RNGCryptoServiceProvider())
-        {
-            byte[] bytes = new byte[16];
-            rng.GetBytes(bytes);
-            return Ok(Convert.ToBase64String(bytes));
-        }
+        using var rng = RandomNumberGenerator.Create();
+        byte[] bytes = new byte[16];
+        rng.GetBytes(bytes);
+        return Ok(Convert.ToBase64String(bytes));
     }
 }
