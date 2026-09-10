@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
+using System.Net.Http;
 using System.Security.Cryptography;
-using System.Security.Permissions;
+using System.Threading.Tasks;
 
 namespace migration_test_deprecated.Controllers;
 
@@ -9,30 +9,31 @@ namespace migration_test_deprecated.Controllers;
 [Route("[controller]")]
 public class DeprecatedController : ControllerBase
 {
+    private static readonly HttpClient _httpClient = new HttpClient();
+
     [HttpGet("fetch")]
-    public IActionResult FetchData()
+    public async Task<IActionResult> FetchData()
     {
-        // WebClient is deprecated
-        using (var client = new WebClient())
+        // Replaced WebClient with HttpClient and asynchronous API
+        try
         {
-            try {
-                string data = client.DownloadString("https://api.github.com");
-                return Ok(data);
-            } catch {
-                return StatusCode(500, "Failed to download");
-            }
+            // GitHub API requires a User-Agent header
+            _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("migration-test-deprecated");
+            string data = await _httpClient.GetStringAsync("https://api.github.com");
+            return Ok(data);
+        }
+        catch
+        {
+            return StatusCode(500, "Failed to download");
         }
     }
 
     [HttpGet("random")]
     public IActionResult GetRandomBytes()
     {
-        // RNGCryptoServiceProvider is deprecated
-        using (var rng = new RNGCryptoServiceProvider())
-        {
-            byte[] bytes = new byte[16];
-            rng.GetBytes(bytes);
-            return Ok(Convert.ToBase64String(bytes));
-        }
+        // Replaced RNGCryptoServiceProvider with RandomNumberGenerator
+        byte[] bytes = new byte[16];
+        RandomNumberGenerator.Fill(bytes);
+        return Ok(Convert.ToBase64String(bytes));
     }
 }
